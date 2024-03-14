@@ -17,14 +17,16 @@ Original 2009-2010: Natalia Bidart, Daniel Moisset
 
 """
  
-import errno
 import sys
 import socket
 import optparse
+import ssl
 
 PREFIX = "http://"
+PREFIX_HTTPS= "https://"
 HTTP_PORT = 80   # El puerto por convencion para HTTP,
 # según http://tools.ietf.org/html/rfc1700
+HTTPS_PORT = 443   # EL puerto por convencion para HTTPS segun https://www.ssldragon.com/es/blog/https-puerto-443/
 HTTP_OK = "200"  # El codigo esperado para respuesta exitosa.
 
 
@@ -55,19 +57,22 @@ def parse_server(url):
     AssertionError
 
     """
-    assert url.startswith(PREFIX)
+    assert url.startswith((PREFIX, PREFIX_HTTPS))
     # Removemos el prefijo:
-    path = url[len(PREFIX):]
+    if(url.startswith(PREFIX)):
+        path = url[len(PREFIX):]
+    else:
+        path = url[len(PREFIX_HTTPS):]
     path_elements = path.split('/')
     result = path_elements[0]
 
-    assert url.startswith(PREFIX + result)
+    assert url.startswith((PREFIX + result, PREFIX_HTTPS + result))
     assert '/' not in result
 
     return result
 
 
-def connect_to_server(server_name):
+def connect_to_server(server_name, port):
     """
     Se conecta al servidor llamado server_name
 
@@ -87,6 +92,7 @@ def connect_to_server(server_name):
        ...
     ConnectionRefusedError: [Errno 111] Connection refused
     """
+    
     ip_address = socket.gethostbyname(server_name)
     # Buscar direccion ip
     # COMPLETAR ABAJO DE ESTA LINEA
@@ -97,7 +103,12 @@ def connect_to_server(server_name):
     # Crear socket
     # COMPLETAR ABAJO DE ESTA LINEA
     # Aqui deben conectarse al puerto correcto del servidor
-    socket_obj = socket.create_connection(address=(ip_address,HTTP_PORT))
+    if(port == HTTP_PORT):
+        socket_obj = socket.create_connection(address=(ip_address,port))
+    else:
+        context = ssl.create_default_context()
+        s = socket.create_connection(address=(ip_address,port))
+        socket_obj = context.wrap_socket(s, server_hostname=server_name)
     # NO MODIFICAR POR FUERA DE ESTA FUNCION
     return socket_obj 
 
@@ -110,8 +121,12 @@ def send_request(connection, url):
         connection es valido y esta conectado
         url.startswith(PREFIX)
     """
-    HTTP_REQUEST = b"GET %s HTTP/1.0\r\n\r\n"
-    connection.send(HTTP_REQUEST % url.encode())
+    if(url.startswith(PREFIX)):
+        HTTP_REQUEST = b"GET %s HTTP/1.0\r\n\r\n" % url.encode()
+    else:
+        host = parse_server(url)
+        HTTP_REQUEST =b"GET / HTTP/1.0\r\nHost: %s\r\n\r\n " % host.encode()
+    connection.send(HTTP_REQUEST )
 
 
 def read_line(connection):
@@ -166,7 +181,7 @@ def check_http_response(header):
     """
     header = header.decode()
     elements = header.split(' ', 3)
-    return (len(elements) >= 2 and elements[0].startswith("HTTP/")
+    return (len(elements) >= 2 and elements[0].startswith(("HTTP/","HTTPS/"))
             and elements[1] == HTTP_OK)
 
 
@@ -207,16 +222,17 @@ def download(url, filename):
     """
     # Obtener server
     server = parse_server(url)
+    port = HTTP_PORT if url.startswith(PREFIX) else HTTPS_PORT
     sys.stderr.write("Contactando servidor '%s'...\n" % server)
 
     try:
-        connection = connect_to_server(server)
+        connection = connect_to_server(server, port)
     except socket.gaierror:
         sys.stderr.write("No se encontro la direccion '%s'\n" % server)
         sys.exit(1)
     except socket.error:
         sys.stderr.write("No se pudo conectar al servidor HTTP en '%s:%d'\n"
-                         % (server, HTTP_PORT))
+                         % (server, port))
         sys.exit(1)
 
     # Enviar pedido, recibir respuesta
@@ -228,6 +244,7 @@ def download(url, filename):
         if not result:
             sys.stderr.write("No se pudieron descargar los datos\n")
     except Exception as e:
+        print(e)
         sys.stderr.write("Error al comunicarse con el servidor\n")
         # Descomentar la siguiente línea para debugging:
         # raise
@@ -248,9 +265,9 @@ def main():
 
     # Validar el argumento
     url = args[0]
-    if not url.startswith(PREFIX):
-        sys.stderr.write("La direccion '%s' no comienza con '%s'\n" % (url,
-                                                                       PREFIX))
+    if not url.startswith((PREFIX, PREFIX_HTTPS)):
+        sys.stderr.write("La direccion '%s' no comienza con '%s' o '%s'\n" % (url,
+                                                                       PREFIX, PREFIX_HTTPS))
         sys.exit(1)
     download(url, options.output)
     
