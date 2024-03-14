@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es"><!-- InstanceBegin template="/Templates/es-html-css.dwt" codeOutsideHTMLIsLocked="false" --> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<meta name="description" content=" En este tutorial vamos a aprender sobre el Servidor Web o Servidor HTTP. El cliente es el Browser que solicita páginas Web y el servidor HTTP o servidor Web las entrega. "/>
+<title>Servidor Web o Servidor HTTP</title>
+<link rel="alternate" href="http://www.edu4java.com/en/web/web-server.html" hreflang="en" />
+<link rel="alternate" href="http://www.edu4java.com/es/web/web30.html" hreflang="es" />
+<!-- InstanceEndEditable -->
+
+<link href="/css/prettify.css" rel="stylesheet" type="text/css" />
+<link href="/css/edu4java1.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-19105638-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+<script src="/js/jquery-resizable.min.js" type="text/javascript"></script>
+<script src="/js/prettify.js" type="text/javascript"></script>
+<script src="/js/edu4java.js" type="text/javascript"></script>
+
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+
+</head>
+
+<body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+<div class="container">
+<div class="header">
+<div class="logo">
+  <a href="/es/index.html"><img class="nopadding" src="/_img/edu4java180.png" alt="edu4java" name="edu4java" width="180" height="90" /></a>
+</div>
+<div class="language"> 
+<a id="english" hr href="/en/index.html" lang="en" >English Version
+</a> 
+</div>
+
+<div class="social">
+<a title="twitter" target="_blank" href="http://twitter.com/edu4java">
+<img src="http://lh3.ggpht.com/_445Wsy7NoNs/TQ9C31Z8YFI/AAAAAAAAABk/3jDAcnYvqww/twitter.png" alt="Twitter" ></a>
+<a title="Facebook" target="_blank" href="http://www.facebook.com/profile.php?id=100001752208335">
+<img src="http://lh4.ggpht.com/_445Wsy7NoNs/TQ9C3ldKaWI/AAAAAAAAABc/6-9I19b1g2k/facebook.png" alt="Facebook"></a>
+<a title="YouTube" target="_blank" href="http://www.youtube.com/user/edu4java">
+<img src="http://lh5.ggpht.com/_445Wsy7NoNs/TQ9C3-aaKQI/AAAAAAAAABo/kp6dD8FLBjA/youtube.png" alt="YouTube"></a>
+</div>
+
+<div id="donate">
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_donations">
+<input type="hidden" name="business" value="edu4java@gmail.com">
+<input type="hidden" name="lc" value="ES">
+<input type="hidden" name="item_name" value="edu4java">
+<input type="hidden" name="no_note" value="0">
+<input type="hidden" name="currency_code" value="EUR">
+<input type="hidden" name="bn" value="PP-DonationsBF:btn_donateCC_LG.gif:NonHostedGuest">
+<input type="image" src="https://www.paypalobjects.com/es_ES/ES/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal. La forma rápida y segura de pagar en Internet.">
+<img alt="donar" border="0" src="https://www.paypalobjects.com/es_ES/i/scr/pixel.gif" width="1" height="1">
+</form>
+</div>
+
+<div id="likes">
+<g:plusone size="standard" count="true" href="http://www.edu4java.com/"></g:plusone>  
+ <div class="fb-like" data-href="http://www.edu4java.com/" data-send="false" data-layout="button_count" data-width="180" data-show-faces="true">
+</div>
+
+ </div>
+
+
+
+<div id="menuh"> 
+<ul>
+    <li><a href="/es/tutoriales-programacion-java.html">JAVA</a></li>
+    <li><a href="/es/tutoriales-programacion-android.html">ANDROID</a></li>    
+    <li><a href="/es/tutoriales-programacion-de-juegos.html">JUEGOS</a></li>    
+    <li><a href="/es/tutoriales-programacion-sql.html">SQL</a></li>
+    <li><a href="/es/tutoriales-html-css.html">HTML</a></li>
+    <li><a href="/es/tutoriales-conceptos-programacion.html">CONCEPTOS</a></li>
+    </ul>
+</div> 
+<!-- end .header --></div> 
+<div class="sidebar1">
+
+  
+<ul class="nav">
+  <li><strong>Conceptos web o www</strong></li>
+  <li><a href="/es/web/web1.html">World Wide Web</a></li> 
+  <li><a href="/es/web/web2.html">Cliente HTTP</a></li>
+  <li><a href="/es/web/web3.html">documento HTML</a></li>
+  <li><a href="/es/web/web30.html">Servidor HTTP</a></li>
+</ul>  
+	  
+<ul class="nav">
+  <li><strong>HTML</strong></li>
+  <li><a href="/es/web/html-introduccion.html">Introducción</a></li>
+  <li><a href="/es/web/html-elementos.html">Lista elementos</a></li>
+  <li><a href="/es/web/html-elementos-funcion.html">Elementos por función</a></li>
+</ul>
+
+<ul class="nav">
+  <li><strong>HTML5</strong></li>
+  <li><a href="/es/web/html5-introduccion.html">Introducción</a></li>
+  <li><a href="/es/web/html5-estructura-global.html">Estructura global</a></li>
+  <li><a href="/es/web/html5-estructura-cuerpo.html">Estructura del cuerpo</a></li>
+  <li><a href="/es/web/html5-cuerpo-header.html">Etiqueta: &lt;header&gt;</a></li>
+  <li><a href="/es/web/html5-cuerpo-nav.html">Etiqueta: &lt;nav&gt;</a></li>
+  <li><a href="/es/web/html5-cuerpo-section.html">Etiqueta: &lt;section&gt;</a></li>
+  <li><a href="/es/web/html5-cuerpo-aside.html">Etiqueta: &lt;aside&gt;</a></li>
+  <li><a href="/es/web/html5-cuerpo-footer.html">Etiqueta: &lt;footer&gt;</a></li>
+  <li><a href="/es/web/html5-cuerpo-article.html">Etiqueta: &lt;article&gt;</a></li>
+  <li><a href="/es/web/html5-cuerpo-hgroup.html">Etiqueta: &lt;hgroup&gt;</a></li>
+  <li><a href="/es/web/html5-cuerpo-figure.html">Etiqueta: &lt;figure&gt;</a></li>
+  <li><a href="/es/web/html5-nuevos-input-formularios.html">Formulario: Nuevos Input</a></li>
+  <li><a href="/es/web/html5-nuevos-elementos.html">Referencias de Elementos</a></li>
+  <li><a href="/es/web/html5-mejoras-incorporaciones.html">Mejoras e incorporaciones</a></li>
+  <li><a href="/es/web/html5-atributos-globales.html">Atributos Globales</a></li>
+</ul>
+
+
+   <!-- InstanceBeginEditable name="sidebarfoot" -->
+  
+
+<!-- InstanceEndEditable -->
+
+<!-- end .sidebar1 --></div>
+<div class="content">
+  <!-- InstanceBeginEditable name="mainContentRegion" -->
+  
+  
+  	<h1>Servidor Web o Servidor HTTP </h1>
+<table width="780"><tbody><tr><td width="480">
+<iframe width="480" height="274" src="http://www.youtube.com/embed/gYGfLZsRvQ4" frameborder="0" allowfullscreen></iframe>
+</td><td width="300"> 
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-1036198782217367";
+/* cuadrado300x250 */
+google_ad_slot = "9955137159";
+google_ad_width = 300;
+google_ad_height = 250;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</td></tr></tbody></table>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-1036198782217367";
+/* 728x90, creado 15/10/10 */
+google_ad_slot = "3131921795";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<p>Habíamos visto que el protocolo HTTP de la Web funciona bajo el paradigma &quot;Cliente – Servidor&quot;. El cliente es el Browser que solicita páginas Web y el servidor HTTP o servidor Web las entrega. En este tutorial vamos a centrarnos en las tecnologías asociadas al servidor conocidas como <strong>&quot;tecnologías del lado del servidor&quot;</strong>.</p>
+<p><strong>Nota</strong>: Un servidor Web no esta limitado a entregar solo paginas Web. Puede entregar cualquier tipo de archivo como pdfs, planillas de cálculo o incluso un formato inventado por nosotros. </p>
+<p><span class="centrar"><img src="../../_img/web/http.png" width="540" height="164" /></span></p>
+<h2>Sitio Web Estático o Dinámico </h2>
+<p>En un comienzo los servidores guardaban las páginas Web como archivos en unidades de almacenamiento. Un servidor Web se limitaba a buscar el archivo solicitado y enviarlo al cliente. Este tipo de sitios Web son llamados Estáticos. </p>
+<p>Con el tiempo se comenzó a utilizar programas en el servidor que generaban las páginas Web en el momento en que eran solicitadas. Hoy día es muy común que las páginas de un sitio Web sean generadas con programas escritos en PHP o java. Este tipo de sitios Web son llamados Dinámicos.</p>
+<h2>De libros digitales a programas en la red </h2>
+<p>Con los sitios dinámicos muchos sitios pasaron de ser libros digitales a programas en la red. Por ejemplo, si ustedes tienen una cuenta de correo electrónico en gmail de Google la pueden manejar a través del sitio Web <a href="http://www.gmail.com/">http://www.gmail.com/</a>. Pueden leer nuevos correos, borrar o crear nuevos correos y enviarlos. </p>
+<h2>Programación Web </h2>
+<p>Estos Programas Web tuvieron tanto éxito  que la mayor cantidad de programación en estos últimos años ha sido mayoritariamente &quot;Programación Web&quot;. Bancos, gobierno, tiendas, agencias de viajes y muchos más tienen sitios Web que en realidad son programas donde nos piden un usuario y una contraseña y entonces podemos acceder a nuestros datos y a múltiples servicios.</p>
+<h2> Parámetros y formularios</h2>
+<p>Los programas Web rompieron con la idea clásica de documentos enlazados de hipertexto. Surge la necesidad de enviar datos desde las páginas Web al servidor (por ejemplo el usuario y la contraseña). Cuando esto sucedió tanto el HTTP como el HTML fueron modificados para soportar el envío de parámetros y formularios desde el cliente al servidor. Para esta comunicación se inventaron dos métodos llamados Get y Post. </p>
+<h2>Método Get </h2>
+<p>Esta técnica consiste en agregar al final del URL un signo <strong>&quot;?&quot;</strong> y pares de <strong>&quot;nombre&quot;</strong> y <strong>&quot;valor&quot;</strong> separados por un símbolo <strong>&quot;&amp;&quot;</strong>. Ejemplo: </p>
+<h2>
+  
+  
+  <img src="../../_img/web/metodoget.png" width="568" height="360" /></h2>
+<p>El método Get tiene dos principales inconvenientes. El primero es que se ven los datos en el URL. Esto es muy malo en el ejemplo de usuario y clave ya que cualquiera que viera la casilla del URL en el navegador vería nuestra clave. La segunda desventaja es que el largo del URL esta limitado por lo que esto nos limita la cantidad de caracteres que podemos enviar.</p>
+<h2>Método Post </h2>
+<p>Este método igual que el Get envía al servidor pares  de <strong>&quot;nombre&quot;</strong> y <strong>&quot;valor&quot; </strong>pero lo hace dentro del mensaje HTTP que solicita una pagina al servidor. De esta forma los datos no son visibles en el URL y no existe la limitación dada por el largo máximo de un URL. El método Post está asociado con el de formulario HTML. Aunque se pueden usar formularios usando el método Get.</p>
+<h2>Formulario HTML</h2>
+<p>A continuación  se ve un simple formulario Web en el Browser. Cuando oprimamos el botón enviar el contenido del las cajas de texto rellenas con edu4java y eli4java serán enviadas al servidor. <img src="../../_img/web/form.png" width="577" height="182" />Este es el código HTML para generarlo:</p>
+<div class="Section1">
+  
+  <p style="margin-bottom: 0.0001pt; line-height: normal;" class="MsoNormal" >
+
+<span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127); background: none repeat scroll 0% 0% silver;">html</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">body</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">form</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"> <span style="color: rgb(127, 0, 127);">action</span><span style="color: black;">=</span><i><span style="color: rgb(42, 0, 255);">"http://www.edu4java.com/es/web/web3.html"</span></i>
+    <span style="color: rgb(127, 0, 127);">method</span><span style="color: black;">=</span><i><span style="color: rgb(42, 0, 255);">"get"</span></i><span style="color: teal;">&gt;</span>
+    <o:p></o:p>
+</span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">table</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">tr</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">td</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;">User</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">td</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">td</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;&lt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">input</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"> <span style="color: rgb(127, 0, 127);">name</span><span style="color: black;">=</span><i><span style="color: rgb(42, 0, 255);">"user"</span></i>
+<span style="color: teal;">/&gt;</span><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">td</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">tr</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">tr</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">td</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;">password</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">td</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">td</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;&lt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">input</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"> <span style="color: rgb(127, 0, 127);">name</span><span style="color: black;">=</span><i><span style="color: rgb(42, 0, 255);">"password"</span></i>
+<span style="color: teal;">/&gt;&lt;/</span><span style="color: rgb(63, 127, 127);">td</span><span style="color: teal;">&gt;</span>
+<o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span class="GramE"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">tr</span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">table</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">input</span><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;;"> <span style="color: rgb(127, 0, 127);">type</span><span style="color: black;">=</span><i><span style="color: rgb(42, 0, 255);">"submit"</span></i> <span style="color: teal;">/&gt;</span><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span lang="EN-GB" style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: black;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span class="SpellE"><span class="GramE"><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">form</span></span></span><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p style="" class="MsoNormal"><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span class="GramE"><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">body</span></span><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span style="font-size: 9pt; font-family: &quot;Courier New&quot;;"><o:p></o:p></span></p>
+
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&lt;/</span><span class="SpellE"><span class="GramE"><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127); background: none repeat scroll 0% 0% silver;">html</span></span></span><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;">&gt;</span><span style="font-size: 9pt;"><o:p></o:p></span></p>
+</div>
+<ul>
+  <li>Podemos ver que la etiqueta <span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">form</span> tiene un atributo <span style="color: rgb(127, 0, 127);">action</span> que indica a que servidor se enviará la petición de página. </li>
+  <li>Las etiquetas <span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);">input</span> representan las cajas de texto y el atributo <span style="color: rgb(127, 0, 127);">name</span> indica el nombre del parámetro usado para enviar la información de su de caja de texto al servidor. </li>
+  <li>El atributo <span style="color: rgb(127, 0, 127);">method</span> indica el método Get del que hablamos antes para enviar la información. </li>
+</ul>
+<p>Después de oprimir enviar podemos ver en el URL de la página resultado como fueron enviados los datos del formulario al servidor.<img src="../../_img/web/form2.png" width="577" height="182" /><strong>Nota</strong>: ignorar el error &quot;Oops! This link …&quot; esto es porque www.edu4java.com es una página estática y no esta preparada para recibir parámetros.</p>
+<p>Si cambiamos el método de Get a Post </p>
+<p><span class="MsoNormal"><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: teal;" lang="EN-GB" xml:lang="EN-GB">&lt;</span><span style="font-size: 9pt; font-family: &quot;Courier New&quot;; color: rgb(63, 127, 127);" lang="EN-GB" xml:lang="EN-GB">form</span><span style="font-size: 9pt; font-family: &quot;Courier New&quot;;" lang="EN-GB" xml:lang="EN-GB"> <span style="color: rgb(127, 0, 127);">action</span><span style="color: black;">=</span><i><span style="color: rgb(42, 0, 255);">&quot;http://www.edu4java.com/es/web/web3.html&quot;</span></i> <span style="color: rgb(127, 0, 127);">method</span><span style="color: black;">=</span><i><span style="color: rgb(42, 0, 255);">&quot;post&quot;</span></i><span style="color: teal;">&gt;</span>
+      <o:p></o:p>
+</span></span></p>
+<p>el servidor recibiría la información pero no se vería en el URL<img src="../../_img/web/form3.png" width="577" height="182" /></p>
+<h2>PHP y Java del lado del servidor: Servlet y Jsp</h2>
+<p>Los lenguajes PHP y Java se han convertido en los más usados del lado del servidor. PHP es visto por muchos como la solución más económica para proyectos simples, aunque con él se han desarrollado aplicaciones como Facebook.  Java es hoy día el lenguaje más usado en el planeta y es el más usado a nivel universitario, empresarial y gubernamental. Mucha gente cree que la elección de java para un gran proyecto es obligatoria.   La comunidad java posee innumerable proyectos y Frameworks comerciales y de código abierto como Struts, Spring, Maven, Google Web Toolkit GWT, etc. </p>
+ <table align="center"><tr><td><a style="color:#06F" href="/es/web/web3.html"><< Tags, Elementos y Estructura de un documento HTML </a></td><td></td>
+<td><a style="color:#06F" href="/es/web/html-introduccion.html">Tutorial HTML. Introducción >></a></td></tr></table>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-1036198782217367";
+/* grande1 */
+google_ad_slot = "9602999857";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+  <script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+  <!-- InstanceEndEditable -->
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-1036198782217367";
+/* grande1 */
+google_ad_slot = "9602999857";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+   
+ <!-- end .content --></div>
+ 
+  <div class="footer"><!-- end .footer --></div>
+  <!-- end .container --></div>
+</body>
+<!-- InstanceEnd --></html>
