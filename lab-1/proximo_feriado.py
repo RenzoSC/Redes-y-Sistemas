@@ -43,11 +43,21 @@ class NextHoliday:
             print("Próximo feriado")
             print(self.holiday['motivo'])
             print("Fecha:")
-            print(day_of_week(self.holiday['dia'], self.holiday['mes'] - 1, self.year))
+            print(day_of_week(self.holiday['dia'], self.holiday['mes'], self.year))
             print(self.holiday['dia'])
-            print(months[self.holiday['mes'] - 1])
+            print(months[self.holiday['mes']-1])
             print("Tipo:")
             print(self.holiday['tipo'])
+
+    def fetch_holiday_by_type(self, type):
+        response = requests.get(get_url(self.year))
+        data = response.json()
+        type_holidays = []
+        for feriado in data:
+            if data["tipo"]==type:
+                type_holidays.append(feriado)
+        self.set_next(type_holidays)
+
 
 next_holiday = NextHoliday()
 next_holiday.fetch_holidays()
