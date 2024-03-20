@@ -55,3 +55,43 @@ if response.status_code == 200:
     print("Película eliminada correctamente.")
 else:
     print("Error al eliminar la película.")
+print()
+
+#Obtener por genero
+genero = "Drama"
+response = requests.get(f'http://localhost:5000/peliculas/{genero}')
+if response.status_code == 200:
+    print("Pelicula por género obtenida")
+else:
+    print("No se pudo obtener pelicula por género")
+print()
+
+# Obtener peliculas por filtro en el titulo
+filter_tittle = "the"  # Filtro del titulo de la pelicula
+response = requests.get(f'http://localhost:5000/peliculas/filter/{filter_tittle}')
+if response.status_code == 200:
+    peliculas_filtradas = response.json()
+    print("Peliculas Filtradas:")
+    for i in peliculas_filtradas:
+        print(f"ID: {i['id']}, Título: {i['titulo']}, Género: {i['genero']}")
+else:
+    print("No se obtuvo peliculas con este filtro.")
+print()
+
+# Sugerir pelicula sin genero
+response = requests.get(f'http://localhost:5000/peliculas/sugerir')
+if response.status_code == 200:
+    peli = response.json()["titulo"]
+    print(f'Pelicula sugerida: {peli}')
+else:
+    print("Error: falló la sugerencia")
+print()
+
+# Sugerir pelicula con genero
+response = requests.get(f'http://localhost:5000/peliculas/sugerir/{genero}')
+if response.status_code == 200:
+    peli = response.json()["titulo"]
+    print(f'Pelicula sugerida: {peli}')
+else:
+    print("Error: falló la sugerencia")
+print()

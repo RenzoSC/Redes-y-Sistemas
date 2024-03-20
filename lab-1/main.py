@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
-
+import random
+import json
 app = Flask(__name__)
 peliculas = [
     {'id': 1, 'titulo': 'Indiana Jones', 'genero': 'Acción'},
@@ -23,7 +24,10 @@ def obtener_peliculas():
 
 def obtener_pelicula(id):
     # Lógica para buscar la película por su ID y devolver sus detalles
-    return jsonify(pelicula_encontrada)
+    for i in peliculas:
+        if i['id'] == id:
+            return jsonify(peliculas[id-1])
+    return jsonify({"error":"id de pelicula no encontrada"})
 
 
 def agregar_pelicula():
@@ -39,13 +43,20 @@ def agregar_pelicula():
 
 def actualizar_pelicula(id):
     # Lógica para buscar la película por su ID y actualizar sus detalles
-    return jsonify(pelicula_actualizada)
+    for i in peliculas:
+        if i['id'] == id:
+            peliculas[id-1] = {"id":id,"titulo":request.json["titulo"], "genero":request.json["genero"]}
+            return jsonify(peliculas[id-1])
+    return jsonify({"error":"id de pelicula no encontrada"})
 
 
 def eliminar_pelicula(id):
     # Lógica para buscar la película por su ID y eliminarla
-    return jsonify({'mensaje': 'Película eliminada correctamente'})
-
+    for i in peliculas:
+        if i["id"]==id:
+            del peliculas[id-1]
+            return jsonify({'mensaje': 'Película eliminada correctamente'})
+    return jsonify({"error":"pelicula no existe"})
 
 def obtener_nuevo_id():
     if len(peliculas) > 0:
@@ -54,12 +65,39 @@ def obtener_nuevo_id():
     else:
         return 1
 
+def obtener_por_genero(gender):
+    peliculas_genero = []
+    for i in peliculas:
+        if i["genero"]== gender:
+            peliculas_genero.append(i)
+    return  jsonify({"error":"genero no encontrado"}) if peliculas_genero==[] else jsonify(peliculas_genero)
 
+def obtener_filter (filter):
+    peliculas_filter = []
+    for i in peliculas:
+        if filter.lower() in i['titulo'].lower():
+            peliculas_filter.append(i)
+    return jsonify({"error":"genero no encontrado"}) if peliculas_filter==[] else jsonify(peliculas_filter)
+
+def sugerir_pelicula(gender=None):
+    if gender == None:
+        return jsonify(random.choice(peliculas))
+    else:
+        peliculas_gender=[]
+        for i in peliculas:
+            if i["genero"]==gender:
+                peliculas_gender.append(i)
+        return jsonify({"error":"genero no encontrado"}) if peliculas_gender==[] else jsonify(random.choice(peliculas_gender))
+        
 app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
 app.add_url_rule('/peliculas/<int:id>', 'obtener_pelicula', obtener_pelicula, methods=['GET'])
 app.add_url_rule('/peliculas', 'agregar_pelicula', agregar_pelicula, methods=['POST'])
 app.add_url_rule('/peliculas/<int:id>', 'actualizar_pelicula', actualizar_pelicula, methods=['PUT'])
 app.add_url_rule('/peliculas/<int:id>', 'eliminar_pelicula', eliminar_pelicula, methods=['DELETE'])
+app.add_url_rule('/peliculas/<string:gender>', 'obtener_por_genero', obtener_por_genero, methods=['GET'])
+app.add_url_rule('/peliculas/filter/<string:filter>', 'obtener_filter', obtener_filter, methods=['GET'])
+app.add_url_rule('/peliculas/sugerir', 'sugerir_pelicula', sugerir_pelicula, methods=['GET'])
+app.add_url_rule('/peliculas/sugerir/<string:gender>', 'sugerir_pelicula', sugerir_pelicula, methods=['GET'])
 
 if __name__ == '__main__':
     app.run()
