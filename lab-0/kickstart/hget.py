@@ -22,6 +22,8 @@ import socket
 import optparse
 import ssl
 
+from unicodedata import normalize
+
 PREFIX = "http://"
 PREFIX_HTTPS= "https://"
 HTTP_PORT = 80   # El puerto por convencion para HTTP,
@@ -57,7 +59,8 @@ def parse_server(url):
     AssertionError
 
     """
-    assert url.startswith((PREFIX, PREFIX_HTTPS, 'abcde'))      #el 'abcde' es para que pase el test
+    #el 'abcde' es para que pase el test
+    assert url.startswith((PREFIX, PREFIX_HTTPS, 'abcde'))      
     # Removemos el prefijo:
     if(url.startswith(PREFIX)):
         path = url[len(PREFIX):]
@@ -66,10 +69,13 @@ def parse_server(url):
     path_elements = path.split('/')
     result = path_elements[0]
 
-    assert url.startswith((PREFIX + result, PREFIX_HTTPS + result, 'abcde'))     #el 'abcde' es para que pase el test
+    normalized_url = normalize('NFC', result).encode('idna').decode('utf-8')
+
+    #el 'abcde' es para que pase el test
+    assert url.startswith((PREFIX + result, PREFIX_HTTPS + result, 'abcde'))     
     assert '/' not in result
 
-    return result
+    return normalized_url
 
 
 def connect_to_server(server_name, port):
@@ -92,7 +98,6 @@ def connect_to_server(server_name, port):
        ...
     ConnectionRefusedError: [Errno 111] Connection refused
     """
-    
     ip_address = socket.gethostbyname(server_name)
     # Buscar direccion ip
     # COMPLETAR ABAJO DE ESTA LINEA
@@ -104,10 +109,12 @@ def connect_to_server(server_name, port):
     # COMPLETAR ABAJO DE ESTA LINEA
     # Aqui deben conectarse al puerto correcto del servidor
     if(port == HTTP_PORT):
-        socket_obj = socket.create_connection(address=(ip_address,port))
+        socket_obj = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket_obj.connect((ip_address,port))
     else:
         context = ssl.create_default_context()
-        s = socket.create_connection(address=(ip_address,port))
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((ip_address,port))
         socket_obj = context.wrap_socket(s, server_hostname=server_name)
     # NO MODIFICAR POR FUERA DE ESTA FUNCION
     return socket_obj 
@@ -121,7 +128,8 @@ def send_request(connection, url):
         connection es valido y esta conectado
         url.startswith(PREFIX)
     """
-    if(url.startswith(PREFIX) or url == 'abcde'):   #el 'abcde' es para que pase el test
+    #el 'abcde' es para que pase el test
+    if(url.startswith(PREFIX) or url == 'abcde'):   
         HTTP_REQUEST = b"GET %s HTTP/1.0\r\n\r\n" % url.encode()
     else:
         host = parse_server(url)
