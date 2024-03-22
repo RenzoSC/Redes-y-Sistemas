@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 import random
-
 from proximo_feriado import NextHoliday
+
+
 app = Flask(__name__)
 peliculas = [
     {'id': 1, 'titulo': 'Indiana Jones', 'genero': 'Acción'},
@@ -18,6 +19,17 @@ peliculas = [
     {'id': 12, 'titulo': 'Fight Club', 'genero': 'Drama'}
 ]
 
+NUM = len(peliculas)
+
+
+def get_by_gender(gender):
+    """Auxiliar function to get all movies by gender"""
+
+    peliculas_genero = []
+    for i in peliculas:
+        if i['genero'] == gender:
+            peliculas_genero.append(i)
+    return peliculas_genero
 
 def obtener_peliculas():
     return jsonify(peliculas)
@@ -26,7 +38,7 @@ def obtener_peliculas():
 def obtener_pelicula(id):
     # Lógica para buscar la película por su ID y devolver sus detalles
     for i in peliculas:
-        if i['id'] == id:
+        if i["id"] == id:
             return jsonify(peliculas[id-1])
     return jsonify({"error":"id de pelicula no encontrada"})
 
@@ -44,61 +56,52 @@ def agregar_pelicula():
 
 def actualizar_pelicula(id):
     # Lógica para buscar la película por su ID y actualizar sus detalles
-    for i in peliculas:
-        if i['id'] == id:
+    for pelicula in peliculas:
+        if pelicula['id'] == id:
             peliculas[id-1] = {"id":id,"titulo":request.json["titulo"], "genero":request.json["genero"]}
-            return jsonify(peliculas[id-1])
-    return jsonify({"error":"id de pelicula no encontrada"})
+            return jsonify(pelicula)
+    return jsonify({"error":"id de Película no encontrada"})
 
 
 def eliminar_pelicula(id):
-    # Lógica para buscar la película por su ID y eliminarla
-    for i in peliculas:
-        if i["id"]==id:
-            del peliculas[id-1]
+    for index,pelicula in enumerate(peliculas):
+        if pelicula["id"] == id:
+            del peliculas[index]
             return jsonify({'mensaje': 'Película eliminada correctamente'})
-    return jsonify({"error":"pelicula no existe"})
+        
+    return jsonify({"error":"Pelicula no existe"})
 
-def obtener_nuevo_id():
-    if len(peliculas) > 0:
-        ultimo_id = peliculas[-1]['id']
-        return ultimo_id + 1
-    else:
-        return 1
-
-def obtener_por_genero(gender):
-    peliculas_genero = []
-    for i in peliculas:
-        if i["genero"]== gender:
-            peliculas_genero.append(i)
-    return  jsonify({"error":"genero no encontrado"}) if peliculas_genero==[] else jsonify(peliculas_genero)
+def obtener_por_genero (gender):
+    peliculas_filtradas = get_by_gender(gender)
+    return jsonify({"error":"genero no encontrado"}) if peliculas_filtradas==[] else jsonify(peliculas_filtradas) 
 
 def obtener_filter (filter):
     peliculas_filter = []
-    for i in peliculas:
-        if filter.lower() in i['titulo'].lower():
-            peliculas_filter.append(i)
-    return jsonify({"error":"genero no encontrado"}) if peliculas_filter==[] else jsonify(peliculas_filter)
+    for pelicula in peliculas:
+        if filter.lower() in pelicula['titulo'].lower():
+            peliculas_filter.append(pelicula)
+    return jsonify({"error":"genero no encontrado"}) if peliculas_filter==[] else jsonify(peliculas_filter) 
+
 
 def sugerir_pelicula(gender=None):
     if gender == None:
         return jsonify(random.choice(peliculas))
     else:
-        peliculas_gender=[]
-        for i in peliculas:
-            if i["genero"]==gender:
-                peliculas_gender.append(i)
-        return jsonify({"error":"genero no encontrado"}) if peliculas_gender==[] else jsonify(random.choice(peliculas_gender))
+        peliculas_filtradas = get_by_gender(gender)
+        return jsonify({"error":"genero no encontrado"}) if peliculas_filtradas==[] else random.choice(peliculas_filtradas)
         
+def obtener_nuevo_id():
+    global NUM
+    NUM+=1
+    return NUM
+
 def sugerir_pelicula_por_feriado(gender):
     next_holiday = NextHoliday()
     next_holiday.fetch_holidays()
     holiday = next_holiday.holiday
-    peliculas_gender = []
-    for i in peliculas:
-        if i["genero"]==gender:
-            peliculas_gender.append(i)
-    return jsonify({"feriado": holiday, "pelicula":random.choice(peliculas_gender)})
+    peliculas_filtradas = get_by_gender(gender)
+    return jsonify({"feriado": holiday, "pelicula":random.choice(peliculas_filtradas)})
+
 
 app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
 app.add_url_rule('/peliculas/<int:id>', 'obtener_pelicula', obtener_pelicula, methods=['GET'])

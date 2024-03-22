@@ -1,4 +1,5 @@
 import requests
+import random
 
 # Obtener todas las películas
 response = requests.get('http://localhost:5000/peliculas')
@@ -52,28 +53,29 @@ print()
 id_pelicula = 1  # ID de la película a eliminar
 response = requests.delete(f'http://localhost:5000/peliculas/{id_pelicula}')
 if response.status_code == 200:
-    print("Película eliminada correctamente.")
+    print("Película de ID: ", id_pelicula, ", eliminada correctamente.")
 else:
     print("Error al eliminar la película.")
 print()
 
-#Obtener por genero
+# Obtener por genero
 genero = "Drama"
 response = requests.get(f'http://localhost:5000/peliculas/{genero}')
 if response.status_code == 200:
-    print("Pelicula por género obtenida")
+    peliculas = response.json()
+    print("Peliculas de género", genero,"obtenidas:")
+    print(peliculas)
 else:
     print("No se pudo obtener pelicula por género")
 print()
 
-# Obtener peliculas por filtro en el titulo
+# Obtener por filter
 filter_tittle = "the"  # Filtro del titulo de la pelicula
 response = requests.get(f'http://localhost:5000/peliculas/filter/{filter_tittle}')
 if response.status_code == 200:
-    peliculas_filtradas = response.json()
-    print("Peliculas Filtradas:")
-    for i in peliculas_filtradas:
-        print(f"ID: {i['id']}, Título: {i['titulo']}, Género: {i['genero']}")
+    peliculas = response.json()
+    print("Peliculas filtradas por clave '",filter_tittle, "':")
+    print(peliculas)
 else:
     print("No se obtuvo peliculas con este filtro.")
 print()
@@ -88,10 +90,25 @@ else:
 print()
 
 # Sugerir pelicula con genero
+genero = "Drama"
 response = requests.get(f'http://localhost:5000/peliculas/sugerir/{genero}')
 if response.status_code == 200:
     peli = response.json()["titulo"]
-    print(f'Pelicula sugerida: {peli}')
+    print(f'Pelicula sugerida de genero {genero}: {peli}')
 else:
     print("Error: falló la sugerencia")
 print()
+
+# Sugerir pelicula por feriado
+genero = "Acción"
+response = requests.get(f'http://localhost:5000/peliculas/sugerir-por-feriado/{genero}')
+if response.status_code == 200:
+    peli = response.json()["pelicula"]
+    feriado =response.json()["feriado"]
+
+    print(f'El proximo feriado es el {feriado["dia"]}/{feriado["mes"]} por motivo de {feriado["motivo"]} y recomiendo para ese dia la pelicula de {peli["genero"]}: {peli["titulo"]}')
+else:
+    print("Error: falló la sugerencia")
+print()
+
+#Faltaria el Test para fetch_holiday_by_type
