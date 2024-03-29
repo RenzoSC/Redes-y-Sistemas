@@ -8,7 +8,8 @@
 
 import optparse
 import socket
-import connection
+import sys
+from connection import Connection
 from constants import *
 
 
@@ -18,17 +19,16 @@ class Server(object):
     especificados donde se reciben nuevas conexiones de clientes.
     """
 
-    def init(self, addr=DEFAULT_ADDR, port=DEFAULT_PORT,
+    def __init__(self, addr=DEFAULT_ADDR, port=DEFAULT_PORT,
                  directory=DEFAULT_DIR):
         print("Serving %s on %s:%s." % (directory, addr, port))
         # FALTA: Crear socket del servidor, configurarlo, asignarlo
         # a una dirección y puerto, etc.
         self.server_socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-
         self.server_socket.bind((addr,port))
-
+        self.dir = directory
         self.server_socket.listen(MAX_CONNECTIONS)
-
+    
         print("Server ready. Waiting connections...")
 
 
@@ -38,13 +38,12 @@ class Server(object):
         y se espera a que concluya antes de seguir.
         """
         while True:
-            pass
             # FALTA: Aceptar una conexión al server, crear una
             # Connection para la conexión y atenderla hasta que termine.
-            client,addr = socket.accept()
-            print("Got connection from",addr)
-            client.send(b'Thank you for your connecting')
-            client.close
+            client,addr = self.server_socket.accept()
+            connection = Connection(client,self.dir)
+            connection.handle()
+            #client.close
 
 
 def main():

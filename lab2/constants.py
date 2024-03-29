@@ -53,3 +53,5 @@ for i in range(ord('a'), ord('z') + 1):
     VALID_CHARS.add(chr(i))
 for i in range(ord('0'), ord('9') + 1):
     VALID_CHARS.add(chr(i))
+
+VALID_COMMANDS =['quit', 'get_slice', 'get_metadata', 'get_file_listening']

@@ -15,11 +15,32 @@ class Connection(object):
     """
 
     def __init__(self, socket, directory):
-        # FALTA: Inicializar atributos de Connection
+        self.s_connection = socket
+        self.dir = directory
+        pass
+    
+    def validate_request(self, request):
+        if (request.count(b'\n')>1):
+            print(error_messages[BAD_EOL] , str(BAD_EOL) + b'\r\n')
+            return
+        request = request.decode("utf-8").split()
+
+        if(request[1] not in VALID_COMMANDS):
+            print(error_messages[INVALID_COMMAND], INVALID_COMMAND)
+            return
         pass
 
     def handle(self):
         """
         Atiende eventos de la conexión hasta que termina.
         """
-        pass
+        while True:
+            request = self.s_connection.recv(1024)
+            print(request.count(b'\n'))
+            self.validate_request(request=request)
+            request = request.decode("utf-8")
+            request = request.strip()
+            if(request=='quit'):
+                print("cerrando conexión con cliente...")
+                self.s_connection.close()
+                break
