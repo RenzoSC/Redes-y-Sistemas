@@ -18,11 +18,19 @@ class Server(object):
     especificados donde se reciben nuevas conexiones de clientes.
     """
 
-    def __init__(self, addr=DEFAULT_ADDR, port=DEFAULT_PORT,
+    def init(self, addr=DEFAULT_ADDR, port=DEFAULT_PORT,
                  directory=DEFAULT_DIR):
         print("Serving %s on %s:%s." % (directory, addr, port))
         # FALTA: Crear socket del servidor, configurarlo, asignarlo
         # a una dirección y puerto, etc.
+        self.server_socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+
+        self.server_socket.bind((addr,port))
+
+        self.server_socket.listen(MAX_CONNECTIONS)
+
+        print("Server ready. Waiting connections...")
+
 
     def serve(self):
         """
@@ -33,6 +41,10 @@ class Server(object):
             pass
             # FALTA: Aceptar una conexión al server, crear una
             # Connection para la conexión y atenderla hasta que termine.
+            client,addr = socket.accept()
+            print("Got connection from",addr)
+            client.send(b'Thank you for your connecting')
+            client.close
 
 
 def main():
