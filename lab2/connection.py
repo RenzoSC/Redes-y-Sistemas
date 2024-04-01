@@ -43,8 +43,21 @@ class Connection(object):
             body_msg += file + EOL
         self.send_response(body_msg)
 
+    def get_metadata(self, request):
+        file = request[2]
+        file_list = os.listdir(path=self.dir)
+        
+        if file not in file_list:
+            self.status = FILE_NOT_FOUND
+            self.send_response('')
+            return
+        
+        path = f'{self.dir}/{file}'
+        metadata = str(os.path.getsize(path))
+        self.send_response(metadata)
+
     def send_response(self, body):
-        status = str(self.status) + error_messages[self.status] + EOL
+        status = str(self.status) +' ' + error_messages[self.status] + EOL
         status = status.encode('utf-8')
         self.s_connection.send(status)
         self.s_connection.send(body.encode('utf-8'))
