@@ -33,7 +33,7 @@ class Connection(object):
         self.status = CODE_OK
         self.connected = False
         print("Cerrando conexión...")
-        self.s_connection.send(b'0 OK')
+        self.send_response('')
         self.s_connection.close()
 
     def get_file_listing(self):
@@ -100,12 +100,17 @@ class Connection(object):
             os.close(fd)
 
     def send_response(self, body):
-        status = str(self.status) +' ' + error_messages[self.status] + EOL
-        status = status.encode('utf-8')
-        self.s_connection.send(status)
-        body_msg = body if type(body)== bytes else body.encode('utf-8')
-        self.s_connection.send(body_msg)
-        self.s_connection.send(EOL.encode('utf-8'))
+        if body != '':
+            response = (str(self.status) + ' '+ error_messages[self.status]+EOL).encode('utf-8') 
+            response += body if type(body)== bytes else body.encode('utf-8')
+            response += EOL.encode('utf-8')
+            i = self.s_connection.send(response)
+            print(i)
+        else:
+            response = str(self.status) + ' '+ error_messages[self.status]+EOL
+            response = response.encode('utf-8')
+            i = self.s_connection.send(response)
+            print(i)
 
     def validate_request(self):
         if (not self.request):
@@ -119,6 +124,7 @@ class Connection(object):
         if (self.request.count(b'\n')>1):
             print(error_messages[BAD_EOL] , str(BAD_EOL) + '\r\n')
             self.status = BAD_EOL
+            self.send_response('')
             self.connected = False
             self.s_connection.close()
             return
@@ -127,32 +133,37 @@ class Connection(object):
         if(len(self.request)<2):
             print(error_messages[BAD_EOL], str(BAD_EOL)+'\r\n')
             self.status = BAD_EOL
+            self.send_response('')
             self.connected = False
             self.s_connection.close()
             return
         if(self.request[0].lower() != "http"):
             print(error_messages[BAD_EOL], str(BAD_EOL) + '\r\n')
             self.status = BAD_EOL
+            self.send_response('')
             self.connected = False
             self.s_connection.close()
             return
         if(self.request[1] not in VALID_COMMANDS):
             print(error_messages[INVALID_COMMAND], str(INVALID_COMMAND)+ '\r\n')
             self.status = INVALID_COMMAND
+            self.send_response('')
             return
         
         if(self.request[1] in ['quit', 'get_file_listing'] and len(self.request)>2):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
+            self.send_response('')
             return
         elif(self.request[1] == 'get_metadata' and len(self.request)!= 3):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
-            self.s_connection.send(b'invalid arguments')
+            self.send_response('')
             return
         elif(self.request[1] == 'get_slice' and len(self.request)!= 5):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
+            self.send_response('')
             return
         else:
             self.status = CODE_OK
