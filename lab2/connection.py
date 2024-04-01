@@ -26,7 +26,86 @@ class Connection(object):
         self.request = b''
         self.connected = True
 
+    def quit(self):
+        """
+        Cierra la conexión.
+        """
+        self.status = CODE_OK
+        self.connected = False
+        print("Cerrando conexión...")
+        self.send_response('')
+        self.s_connection.close()
+
+    def get_file_listening(self):
+        file_list = os.listdir(path=self.dir)
+        body_msg = ""
+        for file in file_list:
+            body_msg += file + EOL
+        self.send_response(body_msg)
+
+    def get_metadata(self, request):
+        file = request[2]
+        file_list = os.listdir(path=self.dir)
+        
+        if file not in file_list:
+            self.status = FILE_NOT_FOUND
+            self.send_response('')
+            return
+        
+        path = f'{self.dir}/{file}'
+        metadata = str(os.path.getsize(path))
+        self.send_response(metadata)
+
+    def get_slice(self, request):
+        file = request[2]
+        offset = int(request[3])
+        size = int(request[4])
+        file_list = os.listdir(path=self.dir)
+        if file not in file_list:
+            self.status = FILE_NOT_FOUND
+            self.send_response('')
+            return
+        path = f'{self.dir}/{file}'
+        tam = os.path.getsize(path)
+
+        if offset > tam:
+            self.status = BAD_OFFSET
+            self.send_response('')
+        
+        fd = os.open(path, os.O_RDONLY)
+
+        try:
+            os.lseek(fd, offset, os.SEEK_SET)
+            bytes_readed = os.read(fd, size)
+            bytes_readed = b64encode(bytes_readed)
+            self.send_response(bytes_readed)
+        except Exception as e:
+            print(e)
+            self.status = INTERNAL_ERROR
+            self.send_response('')
+            self.connected = False
+            print("Cerrando conexión...")
+            self.s_connection.close()
+        finally:
+            os.close(fd)
+
+    def send_response(self, body):
+        status = str(self.status) +' ' + error_messages[self.status] + EOL
+        status = status.encode('utf-8')
+        self.s_connection.send(status)
+        body_msg = body if type(body)== bytes else body.encode('utf-8')
+        self.s_connection.send(body_msg)
+        self.s_connection.send(EOL.encode('utf-8'))
+
     def validate_request(self):
+        if (not self.request):
+            print("No hay ningún cliente conectado...")
+            self.status = CODE_OK
+            self.connected = False
+            print("Cerrando conexión...")
+            self.s_connection.close()
+            return
+        
         if (self.request.count(b'\n')>1):
             print(error_messages[BAD_EOL] , str(BAD_EOL) + '\r\n')
             self.status = BAD_EOL
@@ -45,21 +124,21 @@ class Connection(object):
             self.status = INVALID_COMMAND
             return
         
-        if(self.request[1]== 'get_file_listening' and len(self.request)>2):
+        if(self.request[1] in ['quit', 'get_file_listening'] and len(self.request)>2):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             return
-
-        if(self.request[1] == 'get_metadata' and len(self.request)!= 3):
+        elif(self.request[1] == 'get_metadata' and len(self.request)!= 3):
+            print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
+            self.status = INVALID_ARGUMENTS
+            self.s_connection.send(b'invalid arguments')
+            return
+        elif(self.request[1] == 'get_slice' and len(self.request)!= 5):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             return
-        
-        if(self.request[1] == 'get_slice' and len(self.request)!= 4):
-            print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
-            self.status = INVALID_ARGUMENTS
-            return
-        self.status = CODE_OK
+        else:
+            self.status = CODE_OK
 
 
     def read(self):
@@ -68,13 +147,6 @@ class Connection(object):
         """
         self.request = self.s_connection.recv(1024) # Recibe el mensaje y lo guarda en un buffer para luego parsearlo
         return
-    
-    def quit(self):
-        """
-        Cierra la conexión.
-        """
-        self.s_connection.close()
-        self.connected = False
 
     def execute(self, request):
         """
@@ -89,7 +161,7 @@ class Connection(object):
         elif command == 'get_metadata':
             self.get_metadata(request)
         elif command == 'get_file_listening':
-            self.get_file_listening(request)
+            self.get_file_listening()
         
         
 
@@ -105,5 +177,5 @@ class Connection(object):
             self.read()
             self.validate_request()
 
-            if self.status == CODE_OK:
+            if self.status == CODE_OK and self.connected:
                 self.execute(self.request)
