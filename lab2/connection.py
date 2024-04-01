@@ -27,6 +27,13 @@ class Connection(object):
         self.connected = True
 
     def validate_request(self):
+        if (not self.request):
+            self.connected = False
+            self.status = CODE_OK
+            print("desconectando porque ya no hay ningún cliente...")
+            self.s_connection.close()
+            return
+        
         if (self.request.count(b'\n')>1):
             print(error_messages[BAD_EOL] , str(BAD_EOL) + '\r\n')
             self.status = BAD_EOL
@@ -45,21 +52,21 @@ class Connection(object):
             self.status = INVALID_COMMAND
             return
         
-        if(self.request[1]== 'get_file_listening' and len(self.request)>2):
+        if(self.request[1] in ['quit', 'get_file_listening'] and len(self.request)>2):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             return
-
-        if(self.request[1] == 'get_metadata' and len(self.request)!= 3):
+        elif(self.request[1] == 'get_metadata' and len(self.request)!= 3):
+            print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
+            self.status = INVALID_ARGUMENTS
+            self.s_connection.send(b'invalid arguments')
+            return
+        elif(self.request[1] == 'get_slice' and len(self.request)!= 4):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             return
-        
-        if(self.request[1] == 'get_slice' and len(self.request)!= 4):
-            print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
-            self.status = INVALID_ARGUMENTS
-            return
-        self.status = CODE_OK
+        else:
+            self.status = CODE_OK
 
 
     def read(self):
@@ -105,5 +112,5 @@ class Connection(object):
             self.read()
             self.validate_request()
 
-            if self.status == CODE_OK:
+            if self.status == CODE_OK and self.connected:
                 self.execute(self.request)
