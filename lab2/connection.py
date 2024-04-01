@@ -26,11 +26,36 @@ class Connection(object):
         self.request = b''
         self.connected = True
 
+    def quit(self):
+        """
+        Cierra la conexión.
+        """
+        self.status = CODE_OK
+        self.connected = False
+        print("Cerrando conexión...")
+        self.send_response('')
+        self.s_connection.close()
+
+    def get_file_listening(self):
+        file_list = os.listdir(path=self.dir)
+        body_msg = ""
+        for file in file_list:
+            body_msg += file + EOL
+        self.send_response(body_msg)
+
+    def send_response(self, body):
+        status = str(self.status) + error_messages[self.status] + EOL
+        status = status.encode('utf-8')
+        self.s_connection.send(status)
+        self.s_connection.send(body.encode('utf-8'))
+        self.s_connection.send(EOL.encode('utf-8'))
+
     def validate_request(self):
         if (not self.request):
-            self.connected = False
+            print("No hay ningún cliente conectado...")
             self.status = CODE_OK
-            print("desconectando porque ya no hay ningún cliente...")
+            self.connected = False
+            print("Cerrando conexión...")
             self.s_connection.close()
             return
         
@@ -75,13 +100,6 @@ class Connection(object):
         """
         self.request = self.s_connection.recv(1024) # Recibe el mensaje y lo guarda en un buffer para luego parsearlo
         return
-    
-    def quit(self):
-        """
-        Cierra la conexión.
-        """
-        self.s_connection.close()
-        self.connected = False
 
     def execute(self, request):
         """
@@ -96,7 +114,7 @@ class Connection(object):
         elif command == 'get_metadata':
             self.get_metadata(request)
         elif command == 'get_file_listening':
-            self.get_file_listening(request)
+            self.get_file_listening()
         
         
 
