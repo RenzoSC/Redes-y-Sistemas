@@ -23,27 +23,50 @@ class Connection(object):
         self.s_connection = socket
         self.dir = directory
         self.status = CODE_OK
-        self.buffer = ''
+        self.request = b''
         self.connected = True
-        self.request = None
-    
 
-    def validate_request(self, request):
-        if (request.count(b'\n')>1):
-            print(error_messages[BAD_EOL] , str(BAD_EOL) + b'\r\n')
+    def validate_request(self):
+        if (self.request.count(b'\n')>1):
+            print(error_messages[BAD_EOL] , str(BAD_EOL) + '\r\n')
+            self.status = BAD_EOL
+            return
+        self.request = self.request.decode("utf-8").split()
+        if(len(self.request)<2):
+            print(error_messages[BAD_EOL], str(BAD_EOL)+'\r\n')
+            self.status = BAD_EOL
+            return
+        if(self.request[0].lower() != "http"):
+            print(error_messages[BAD_EOL], str(BAD_EOL) + '\r\n')
+            self.status = BAD_EOL
+            return
+        if(self.request[1] not in VALID_COMMANDS):
+            print(error_messages[INVALID_COMMAND], str(INVALID_COMMAND)+ '\r\n')
+            self.status = INVALID_COMMAND
+            return
+        
+        if(self.request[1]== 'get_file_listening' and len(self.request)>2):
+            print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
+            self.status = INVALID_ARGUMENTS
             return
 
-        if(request[1] not in VALID_COMMANDS):
-            print(error_messages[INVALID_COMMAND], INVALID_COMMAND)
+        if(self.request[1] == 'get_metadata' and len(self.request)!= 3):
+            print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
+            self.status = INVALID_ARGUMENTS
             return
-        pass
+        
+        if(self.request[1] == 'get_slice' and len(self.request)!= 4):
+            print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
+            self.status = INVALID_ARGUMENTS
+            return
+        self.status = CODE_OK
+
 
     def read(self):
         """
         Lee un mensaje completo de la conexión.
         """
-        self.buffer = self.s_connection.recv(1024).decode('utf-8') # Recibe el mensaje y lo guarda en un buffer para luego parsearlo
-
+        self.request = self.s_connection.recv(1024) # Recibe el mensaje y lo guarda en un buffer para luego parsearlo
         return
     
     def quit(self):
@@ -67,7 +90,7 @@ class Connection(object):
             self.get_metadata(request)
         elif command == 'get_file_listening':
             self.get_file_listening(request)
-        pass
+        
         
 
     def handle(self):
@@ -81,4 +104,6 @@ class Connection(object):
         while self.connected is True:
             self.read()
             self.validate_request()
-            self.execute()
+
+            if self.status == CODE_OK:
+                self.execute(self.request)
