@@ -33,7 +33,7 @@ class Connection(object):
         self.status = CODE_OK
         self.connected = False
         print("Cerrando conexión...")
-        self.send_response('')
+        self.s_connection.send(b'0 OK')
         self.s_connection.close()
 
     def get_file_listing(self):
@@ -58,12 +58,20 @@ class Connection(object):
 
     def get_slice(self, request):
         file = request[2]
-        offset = int(request[3])
-        size = int(request[4])
+        try:
+            offset = int(request[3])
+            size = int(request[4])
+        except ValueError:
+            self.status = INVALID_ARGUMENTS
+            self.send_response('')
+            self.status = CODE_OK
+            return
+        
         file_list = os.listdir(path=self.dir)
         if file not in file_list:
             self.status = FILE_NOT_FOUND
             self.send_response('')
+            self.status = CODE_OK
             return
         path = f'{self.dir}/{file}'
         tam = os.path.getsize(path)
@@ -71,6 +79,8 @@ class Connection(object):
         if offset > tam:
             self.status = BAD_OFFSET
             self.send_response('')
+            self.status = CODE_OK
+            return
         
         fd = os.open(path, os.O_RDONLY)
 
@@ -100,25 +110,31 @@ class Connection(object):
     def validate_request(self):
         if (not self.request):
             print("No hay ningún cliente conectado...")
-            self.status = CODE_OK
             self.connected = False
             print("Cerrando conexión...")
             self.s_connection.close()
+            self.status = CODE_OK
             return
         
         if (self.request.count(b'\n')>1):
             print(error_messages[BAD_EOL] , str(BAD_EOL) + '\r\n')
             self.status = BAD_EOL
+            self.connected = False
+            self.s_connection.close()
             return
         self.request = self.request.decode("utf-8").split()
         print(self.request)
         if(len(self.request)<2):
             print(error_messages[BAD_EOL], str(BAD_EOL)+'\r\n')
             self.status = BAD_EOL
+            self.connected = False
+            self.s_connection.close()
             return
         if(self.request[0].lower() != "http"):
             print(error_messages[BAD_EOL], str(BAD_EOL) + '\r\n')
             self.status = BAD_EOL
+            self.connected = False
+            self.s_connection.close()
             return
         if(self.request[1] not in VALID_COMMANDS):
             print(error_messages[INVALID_COMMAND], str(INVALID_COMMAND)+ '\r\n')
@@ -172,7 +188,8 @@ class Connection(object):
         """
         if not os.path.exists(self.dir):
             self.status = INTERNAL_ERROR
-            self.error()
+            self.connected = False
+            self.s_connection.close()
 
         while self.connected is True:
             self.read()
