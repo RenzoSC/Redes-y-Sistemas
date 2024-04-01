@@ -36,7 +36,7 @@ class Connection(object):
         self.send_response('')
         self.s_connection.close()
 
-    def get_file_listening(self):
+    def get_file_listing(self):
         file_list = os.listdir(path=self.dir)
         body_msg = ""
         for file in file_list:
@@ -111,6 +111,7 @@ class Connection(object):
             self.status = BAD_EOL
             return
         self.request = self.request.decode("utf-8").split()
+        print(self.request)
         if(len(self.request)<2):
             print(error_messages[BAD_EOL], str(BAD_EOL)+'\r\n')
             self.status = BAD_EOL
@@ -124,7 +125,7 @@ class Connection(object):
             self.status = INVALID_COMMAND
             return
         
-        if(self.request[1] in ['quit', 'get_file_listening'] and len(self.request)>2):
+        if(self.request[1] in ['quit', 'get_file_listing'] and len(self.request)>2):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             return
@@ -160,8 +161,8 @@ class Connection(object):
             self.get_slice(request)
         elif command == 'get_metadata':
             self.get_metadata(request)
-        elif command == 'get_file_listening':
-            self.get_file_listening()
+        elif command == 'get_file_listing':
+            self.get_file_listing()
         
         
 
