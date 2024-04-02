@@ -195,7 +195,7 @@ class Connection(object):
         """
         while not EOL in buffer and self.connected:
             try:
-                buffer += self.socket.recv(BUFFER_SIZE).decode("ascii")
+                buffer += self.s_connection.recv(BUFFER_SIZE).decode("ascii")
             except UnicodeError:
                 self.send_response('')
                 self.connected = False
@@ -252,7 +252,7 @@ class Connection(object):
                     self.validate_request()
                     self.execute(self.request)
                 except Exception:
-                    self.send_code_message(INTERNAL_ERROR)
-                    self.is_connected = False
-                    print("Closing connection...")
+                    self.send_response('')
+                    self.connected = False
+                    print("Cerrando conexión...")
 
