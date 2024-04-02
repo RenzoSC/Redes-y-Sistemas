@@ -160,6 +160,12 @@ class Connection(object):
             self.status = INVALID_ARGUMENTS
             self.send_response('')
             return
+        elif(self.request[1]== 'get_metadata' and len(self.request)==3 and len(self.request[2])>=100):
+            self.status = BAD_REQUEST
+            self.send_response('')
+            self.connected = False
+            self.s_connection.close()
+            return
         elif(self.request[1] == 'get_slice' and len(self.request)!= 5):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
