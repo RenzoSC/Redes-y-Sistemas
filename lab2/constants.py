@@ -10,7 +10,11 @@ DEFAULT_ADDR = '0.0.0.0'  # 0.0.0.0 representa todas las IPv4 del server
 DEFAULT_PORT = 19500
 MAX_CONNECTIONS = 5
 
+
 EOL = '\r\n'
+
+BUFFER_SIZE = 4096
+MAX_FILENAME = BUFFER_SIZE - 13 - 1
 
 
 CODE_OK = 0
