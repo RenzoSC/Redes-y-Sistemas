@@ -247,6 +247,12 @@ class Connection(object):
             
             else:
                 try:
-                    #Parseamos el comando y lo ejecutamos
-
+                    # Revisamos el comando guardado en line y lo ejecutamos
+                    self.request = line
+                    self.validate_request()
+                    self.execute(self.request)
+                except Exception:
+                    self.send_code_message(INTERNAL_ERROR)
+                    self.is_connected = False
+                    print("Closing connection...")
 
