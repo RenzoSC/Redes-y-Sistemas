@@ -61,7 +61,6 @@ class Client(object):
             assert bytes_sent > 0
             message = message[bytes_sent:]
 
-
     def _recv(self, timeout=None):
         """
         Recibe datos y acumula en el buffer interno.

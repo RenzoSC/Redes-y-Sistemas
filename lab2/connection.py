@@ -65,11 +65,13 @@ class Connection(object):
         if not self.is_valid_file(file):
             self.status = FILE_NOT_FOUND
             self.send_response('')
+            self.status = CODE_OK
             return
         
         if file not in file_list:
             self.status = FILE_NOT_FOUND
             self.send_response('')
+            self.status = CODE_OK
             return
 
         path = f'{self.dir}/{file}'
@@ -139,13 +141,13 @@ class Connection(object):
             self.status = CODE_OK
             return
         
-        if (self.request.count('\n')>1):
-            print(error_messages[BAD_EOL] , str(BAD_EOL) + '\r\n')
-            self.status = BAD_EOL
-            self.send_response('')
-            self.connected = False
-            self.s_connection.close()
-            return
+        # if (self.request.count('\n')>1):
+        #     print(error_messages[BAD_EOL] , str(BAD_EOL) + '\r\n')
+        #     self.status = BAD_EOL
+        #     self.send_response('')
+        #     self.connected = False
+        #     self.s_connection.close()
+        #     return
         self.request = self.request.split()
         print(self.request)
         
@@ -168,22 +170,26 @@ class Connection(object):
             print(error_messages[INVALID_COMMAND], str(INVALID_COMMAND)+ '\r\n')
             self.status = INVALID_COMMAND
             self.send_response('')
+            self.status = CODE_OK
             return
         
         if(self.request[0] in ['quit', 'get_file_listing'] and len(self.request)>1):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             self.send_response('')
+            self.status = CODE_OK
             return
         elif(self.request[0] == 'get_metadata' and len(self.request)!= 2):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             self.send_response('')
+            self.status = CODE_OK
             return
         elif(self.request[0] == 'get_slice' and len(self.request)!= 4):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             self.send_response('')
+            self.status = CODE_OK
             return
         else:
             self.status = CODE_OK
@@ -242,9 +248,11 @@ class Connection(object):
             self.connected = False
             self.s_connection.close()
         buffer = ""
+        
         while self.connected:
+            
             line, buffer = self.read_line(buffer)
-
+        
             print(f'line: {line} buffer: {buffer}')
 
             if line == "":
@@ -255,17 +263,17 @@ class Connection(object):
                 self.send_response('')
                 self.connected = False
                 print("Cerrando conexión...")
+                self.s_connection.close()
             
             else:
                 try:
                     # Revisamos el comando guardado en line y lo ejecutamos
                     self.request = line
                     self.validate_request()
-                    if self.status == CODE_OK:
+                    if self.status == CODE_OK and self.connected:
                         self.execute(self.request)
                 except Exception as e:
+                    print(f"errorrrrr:    {e}")
                     self.send_response('')
                     self.connected = False
                     print("Cerrando conexión exception ...")
-
-        self.s_connection.close()

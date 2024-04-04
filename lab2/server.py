@@ -44,7 +44,7 @@ class Server(object):
             print(f'adress: {addr}\n')
             connection = Connection(client,self.dir)
             connection.handle()
-            #client.close
+            client.close()
 
 
 def main():
