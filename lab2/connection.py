@@ -129,25 +129,26 @@ class Connection(object):
 
     def send_response(self, body):
         if body != '':
-            response = (str(self.status) + ' '+ error_messages[self.status]+EOL).encode('utf-8') 
-            response += body if type(body)== bytes else body.encode('utf-8')
-            response += EOL.encode('utf-8')
+            response = (str(self.status) + ' '+ error_messages[self.status]+EOL).encode('ascii') 
+            response += body if type(body)== bytes else body.encode('ascii')
+            response += EOL.encode('ascii')
         else:
             response = str(self.status) + ' '+ error_messages[self.status]+EOL
-            response = response.encode('utf-8')
+            response = response.encode('ascii')
         try:
             self.s_connection.send(response)
-        except BrokenPipeError or ConnectionResetError:
+        except Exception as e:
+            print(f"exception sending response: {e}")
             self.connected = False
 
     def validate_request(self):
-        if (not self.request):
-            print("No hay ningún cliente conectado...")
-            self.connected = False
-            print("Cerrando conexión...")
-            self.close()
-            self.status = CODE_OK
-            return
+        # if (not self.request):
+        #     print("No hay ningún cliente conectado...")
+        #     self.connected = False
+        #     print("Cerrando conexión...")
+        #     self.close()
+        #     self.status = CODE_OK
+        #     return
         
         self.request = self.request.split()
         print(self.request)
@@ -157,26 +158,22 @@ class Connection(object):
             print(error_messages[INVALID_COMMAND], str(INVALID_COMMAND)+ '\r\n')
             self.status = INVALID_COMMAND
             self.send_response('')
-            self.status = CODE_OK
             return
         
         if(self.request[0] in ['quit', 'get_file_listing'] and len(self.request)>1):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             self.send_response('')
-            self.status = CODE_OK
             return
         elif(self.request[0] == 'get_metadata' and len(self.request)!= 2):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             self.send_response('')
-            self.status = CODE_OK
             return
         elif(self.request[0] == 'get_slice' and len(self.request)!= 4):
             print(error_messages[INVALID_ARGUMENTS], str(INVALID_ARGUMENTS) + '\r\n')
             self.status = INVALID_ARGUMENTS
             self.send_response('')
-            self.status = CODE_OK
             return
         else:
             self.status = CODE_OK
@@ -199,13 +196,14 @@ class Connection(object):
                 print("El cliente se desconectó inesperadamente...")
                 self.close()
                 return "", ""
-            except UnicodeError:
+            except UnicodeError :
                 print("unicoderrorr")
                 self.status = INTERNAL_ERROR
                 self.send_response('')
                 self.connected = False
                 print("Cerrando conexión...")
                 self.close()
+                return "", ""
         
         if EOL in buffer:
             line, buffer = buffer.split(EOL,1)
@@ -267,6 +265,7 @@ class Connection(object):
                     self.validate_request()
                     if self.status == CODE_OK and self.connected:
                         self.execute(self.request)
+                    self.status = CODE_OK
                 except Exception as e:
                     print(f"error exception:    {e}")
                     self.status = INTERNAL_ERROR
@@ -274,3 +273,4 @@ class Connection(object):
                     self.connected = False
                     print("Cerrando conexión exception ...")
                     self.close()
+        self.close()
