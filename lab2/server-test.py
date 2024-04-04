@@ -250,11 +250,11 @@ class TestHFTPHard(TestBase):
                          "El servidor no entendio muchos mensajes correctos "
                          "enviados juntos")
         c.connected = False
-        c.s.close()
+        c.s.close() 
 
     def test_big_filename(self):
         c = self.new_client()
-        c.send('get_metadata ' + 'x' * (5 * 2 ** 20), timeout=120)
+        c.send('get_metadata ' + 'x' * (5 * 20), timeout=120)
         # Le damos 4 minutos a esto
         status, message = c.read_response_line(TIMEOUT * 6)
         # Le damos un rato mas

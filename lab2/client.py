@@ -53,13 +53,13 @@ class Client(object):
         También puede fallar con otras excepciones de socket.
         """
         self.s.settimeout(timeout)
-        msg = 'HTTP ' + message + EOL  # Completar el mensaje con un fin de línea
-        while msg:
+        message += EOL  # Completar el mensaje con un fin de línea
+        while message:
             logging.debug("Enviando el (resto del) mensaje %s."
-                          % repr(msg))
-            bytes_sent = self.s.send(msg.encode("ascii"))
+                          % repr(message))
+            bytes_sent = self.s.send(message.encode("ascii"))
             assert bytes_sent > 0
-            msg = msg[bytes_sent:]
+            message = message[bytes_sent:]
 
     def _recv(self, timeout=None):
         """

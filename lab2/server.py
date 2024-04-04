@@ -43,7 +43,7 @@ class Server(object):
             client,addr = self.server_socket.accept()
             connection = Connection(client,self.dir)
             connection.handle()
-            #client.close
+            client.close()
 
 
 def main():
