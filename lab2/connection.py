@@ -26,6 +26,12 @@ class Connection(object):
         self.request = b''
         self.connected = True
 
+    def close(self):
+        try:
+            self.s_connection.close()
+        except socket.error as e:
+            print(f"error cerrando socket: {e}")
+
     def quit(self):
         """
         Cierra la conexión.
@@ -34,7 +40,7 @@ class Connection(object):
         self.connected = False
         print("Cerrando conexión...")
         self.send_response('')
-        self.s_connection.close()
+        self.close()
 
     def get_file_listing(self):
         file_list = os.listdir(path=self.dir)
@@ -117,7 +123,7 @@ class Connection(object):
             self.send_response('')
             self.connected = False
             print("Cerrando conexión...")
-            self.s_connection.close()
+            self.close()
         finally:
             os.close(fd)
 
@@ -126,45 +132,26 @@ class Connection(object):
             response = (str(self.status) + ' '+ error_messages[self.status]+EOL).encode('utf-8') 
             response += body if type(body)== bytes else body.encode('utf-8')
             response += EOL.encode('utf-8')
-            i = self.s_connection.send(response)
         else:
             response = str(self.status) + ' '+ error_messages[self.status]+EOL
             response = response.encode('utf-8')
-            i = self.s_connection.send(response)
+        try:
+            self.s_connection.send(response)
+        except BrokenPipeError or ConnectionResetError:
+            self.connected = False
 
     def validate_request(self):
         if (not self.request):
             print("No hay ningún cliente conectado...")
             self.connected = False
             print("Cerrando conexión...")
-            self.s_connection.close()
+            self.close()
             self.status = CODE_OK
             return
         
-        # if (self.request.count('\n')>1):
-        #     print(error_messages[BAD_EOL] , str(BAD_EOL) + '\r\n')
-        #     self.status = BAD_EOL
-        #     self.send_response('')
-        #     self.connected = False
-        #     self.s_connection.close()
-        #     return
         self.request = self.request.split()
         print(self.request)
         
-        # if(len(self.request)<2):
-        #     print(error_messages[BAD_EOL], str(BAD_EOL)+'\r\n')
-        #     self.status = BAD_EOL
-        #     self.send_response('')
-        #     self.connected = False
-        #     self.s_connection.close()
-        #     return
-        # if(self.request[0].lower() != "http"):
-        #     print(error_messages[BAD_EOL], str(BAD_EOL) + '\r\n')
-        #     self.status = BAD_EOL
-        #     self.send_response('')
-        #     self.connected = False
-        #     self.s_connection.close()
-        #     return
 
         if(self.request[0] not in VALID_COMMANDS):
             print(error_messages[INVALID_COMMAND], str(INVALID_COMMAND)+ '\r\n')
@@ -205,12 +192,20 @@ class Connection(object):
         while not EOL in buffer and self.connected:
             try:
                 buffer += self.s_connection.recv(BUFFER_SIZE).decode("ascii")
+            except socket.error:
+                print("socketerrorr")
+                self.status =BAD_EOL
+                self.connected = False
+                print("El cliente se desconectó inesperadamente...")
+                self.close()
+                return "", ""
             except UnicodeError:
+                print("unicoderrorr")
                 self.status = INTERNAL_ERROR
                 self.send_response('')
                 self.connected = False
                 print("Cerrando conexión...")
-                self.s_connection.close()
+                self.close()
         
         if EOL in buffer:
             line, buffer = buffer.split(EOL,1)
@@ -246,7 +241,7 @@ class Connection(object):
         if not os.path.exists(self.dir):
             self.status = INTERNAL_ERROR
             self.connected = False
-            self.s_connection.close()
+            self.close()
         buffer = ""
         
         while self.connected:
@@ -263,7 +258,7 @@ class Connection(object):
                 self.send_response('')
                 self.connected = False
                 print("Cerrando conexión...")
-                self.s_connection.close()
+                self.close()
             
             else:
                 try:
@@ -273,7 +268,9 @@ class Connection(object):
                     if self.status == CODE_OK and self.connected:
                         self.execute(self.request)
                 except Exception as e:
-                    print(f"errorrrrr:    {e}")
+                    print(f"error exception:    {e}")
+                    self.status = INTERNAL_ERROR
                     self.send_response('')
                     self.connected = False
                     print("Cerrando conexión exception ...")
+                    self.close()
