@@ -195,7 +195,7 @@ class Connection(object):
                 self.connected = False
                 print("El cliente se desconectó inesperadamente...")
                 self.close()
-                return "", ""
+                return ""
             except UnicodeError :
                 print("unicoderrorr")
                 self.status = INTERNAL_ERROR
@@ -203,14 +203,13 @@ class Connection(object):
                 self.connected = False
                 print("Cerrando conexión...")
                 self.close()
-                return "", ""
+                return ""
         
         if EOL in buffer:
-            line, buffer = buffer.split(EOL,1)
-            line = line.strip()
-            return line, buffer
+            buffer = buffer.strip()
+            return buffer
         else:
-            return "",""
+            return ""
 
 
 
@@ -240,37 +239,58 @@ class Connection(object):
             self.status = INTERNAL_ERROR
             self.connected = False
             self.close()
-        buffer = ""
-        
+        buffer = []
+        line = ""
+        full = False
+
         while self.connected:
             
-            line, buffer = self.read_line(buffer)
-        
-            print(f'line: {line} buffer: {buffer}')
-
-            if line == "":
-                continue
-
-            elif '\n' in line:
-                self.status = BAD_EOL
-                self.send_response('')
-                self.connected = False
-                print("Cerrando conexión...")
-                self.close()
+            line = self.read_line(line)
             
-            else:
-                try:
-                    # Revisamos el comando guardado en line y lo ejecutamos
-                    self.request = line
-                    self.validate_request()
-                    if self.status == CODE_OK and self.connected:
-                        self.execute(self.request)
-                    self.status = CODE_OK
-                except Exception as e:
-                    print(f"error exception:    {e}")
-                    self.status = INTERNAL_ERROR
+            while (line != ""):
+                if '\n' in line:
+                    self.status = BAD_EOL
                     self.send_response('')
                     self.connected = False
-                    print("Cerrando conexión exception ...")
+                    print("Cerrando conexión...")
                     self.close()
+                else:
+                    buffer.append(line)
+                    print(f'line: {line} endline')
+                    print(f'buffer: {buffer} endbuffer')
+                    full = True
+                    line = ""
+
+                    #Aca quiero hacer que lea a ver si hay otra linea
+                    #el problema es que read_line espera infinitamente hasta encontrarla
+                    #asi que nuenca vuelve cuando se acaban, habria que ver cuando se acaba y ahi
+                    #dejar de leer. si se hace eso el buffer funcionaria y nomas faltaria hacer que 
+                    #solo imprimera el 0ok para el primero en el for de abajo
+                    #taria bueno algo tipo line = next(file) y si no hay que levante un flag que se pueda
+                    #checkear o algo, pero no se como hacerlo aca
+                    line = self.read_line(line)
+
+            if not full:
+                continue
+
+            else:
+                for command in buffer:
+                    line = command
+                    buffer.pop()
+                    try:
+                        # Revisamos el comando guardado en line y lo ejecutamos
+                        self.request = line
+                        self.validate_request()
+                        if self.status == CODE_OK and self.connected:
+                            self.execute(self.request)
+                            self.status = CODE_OK
+                    except Exception as e:
+                        print(f"error exception:    {e}")
+                        self.status = INTERNAL_ERROR
+                        self.send_response('')
+                        self.connected = False
+                        print("Cerrando conexión exception ...")
+                        self.close()
+                line = ""
+                full = False
         self.close()
