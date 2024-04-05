@@ -186,6 +186,7 @@ class Connection(object):
         """
         Lee un mensaje completo de la conexión.
         """
+
         while not EOL in buffer and self.connected:
             try:
                 buffer += self.s_connection.recv(BUFFER_SIZE).decode("ascii")
@@ -268,11 +269,12 @@ class Connection(object):
                     #solo imprimera el 0ok para el primero en el for de abajo
                     #taria bueno algo tipo line = next(file) y si no hay que levante un flag que se pueda
                     #checkear o algo, pero no se como hacerlo aca
-                    line = self.read_line(line)
+                    
+                    #Como esta ahora funciona igual que antes
+                    #line = self.read_line(line)
 
             if not full:
-                continue
-
+                continue            
             else:
                 for command in buffer:
                     line = command
