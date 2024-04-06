@@ -9,9 +9,9 @@
 import optparse
 import socket
 import sys
-import threading
 import os
 import connection
+from multiprocessing import Pool
 from constants import *
 
 
@@ -32,30 +32,16 @@ class Server(object):
         self.server_socket.bind((addr,port))
         self.dir = directory
         self.server_socket.listen(MAX_CONNECTIONS)
-        self.threadLimiter = threading.BoundedSemaphore(MAX_CONNECTIONS)
 
         print("Server ready. Waiting connections...")
 
-    def handle(self, connection):
+    def handle(self, c_socket):
         """
         Atiende una conexión. Recibe un objeto Connection y se encarga
         de manejarla.
         """
-        self.threadLimiter.acquire()
-        def handler():
-            try:
-                connection.handle()
-            finally:
-                self.threadLimiter.release()
-        t = threading.Thread(target=handler)
-        t.start()
-        """
-        El patrón que te mostré anteriormente, donde el bloque finally dentro del método handle() de Connection se encarga de 
-        cerrar la conexión y limpiar recursos, es suficiente para garantizar que el hilo de ejecución termine adecuadamente, 
-        liberando el bloqueo adquirido previamente con acquire().
-        Por lo tanto, si confías en que Connection.handle() manejará adecuadamente la terminación del hilo y la liberación de
-        recursos, no necesitarías llamar explícitamente a release() después de acquire() en el método serve() del servidor.
-        """
+        conn = connection.Connection(c_socket, self.dir)
+        conn.handle()
 
     def serve(self):
         """
@@ -63,11 +49,9 @@ class Server(object):
         y se espera a que concluya antes de seguir.
         """
         while True:
-            # FALTA: Aceptar una conexión al server, crear una
-            # Connection para la conexión y atenderla hasta que termine.
             client,addr = self.server_socket.accept()
-            connection_c = connection.Connection(client,self.dir)
-            self.handle(connection_c)
+            pool = Pool(MAX_CONNECTIONS)
+            pool.apply_async(self.handle(client))
             
 def main():
     """Parsea los argumentos y lanza el server"""
