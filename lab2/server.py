@@ -9,7 +9,9 @@
 import optparse
 import socket
 import sys
-from connection import Connection
+import threading
+import os
+import connection
 from constants import *
 
 
@@ -22,15 +24,38 @@ class Server(object):
     def __init__(self, addr=DEFAULT_ADDR, port=DEFAULT_PORT,
                  directory=DEFAULT_DIR):
         print("Serving %s on %s:%s." % (directory, addr, port))
-        # FALTA: Crear socket del servidor, configurarlo, asignarlo
-        # a una dirección y puerto, etc.
+
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
+
         self.server_socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.server_socket.bind((addr,port))
         self.dir = directory
         self.server_socket.listen(MAX_CONNECTIONS)
-    
+        self.threadLimiter = threading.BoundedSemaphore(MAX_CONNECTIONS)
+
         print("Server ready. Waiting connections...")
 
+    def handle(self, connection):
+        """
+        Atiende una conexión. Recibe un objeto Connection y se encarga
+        de manejarla.
+        """
+        self.threadLimiter.acquire()
+        def handler():
+            try:
+                connection.handle()
+            finally:
+                self.threadLimiter.release()
+        t = threading.Thread(target=handler)
+        t.start()
+        """
+        El patrón que te mostré anteriormente, donde el bloque finally dentro del método handle() de Connection se encarga de 
+        cerrar la conexión y limpiar recursos, es suficiente para garantizar que el hilo de ejecución termine adecuadamente, 
+        liberando el bloqueo adquirido previamente con acquire().
+        Por lo tanto, si confías en que Connection.handle() manejará adecuadamente la terminación del hilo y la liberación de
+        recursos, no necesitarías llamar explícitamente a release() después de acquire() en el método serve() del servidor.
+        """
 
     def serve(self):
         """
@@ -41,11 +66,9 @@ class Server(object):
             # FALTA: Aceptar una conexión al server, crear una
             # Connection para la conexión y atenderla hasta que termine.
             client,addr = self.server_socket.accept()
-            connection = Connection(client,self.dir)
-            connection.handle()
-            #client.close()
-
-
+            connection_c = connection.Connection(client,self.dir)
+            self.handle(connection_c)
+            
 def main():
     """Parsea los argumentos y lanza el server"""
 
