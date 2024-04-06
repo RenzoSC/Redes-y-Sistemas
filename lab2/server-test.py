@@ -250,7 +250,7 @@ class TestHFTPHard(TestBase):
                          "El servidor no entendio muchos mensajes correctos "
                          "enviados juntos")
         c.connected = False
-        c.s.close() 
+        c.s.close() # --> c.close()
 
     def test_big_filename(self):
         c = self.new_client()
