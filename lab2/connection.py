@@ -30,7 +30,9 @@ class Connection(object):
 
     def close(self):
         try:
-            self.s_connection.close()
+            if(self.connected==True):
+                self.s_connection.close()
+                self.connected= False
         except socket.error as e:
             print(f"error cerrando socket: {e}")
 
@@ -42,7 +44,6 @@ class Connection(object):
         Cierra la conexión.
         """
         self.status = CODE_OK
-        self.connected = False
         print("Cerrando conexión...")
         self.send_response('')
         self.close()
@@ -139,7 +140,6 @@ class Connection(object):
             print(e)
             self.status = INTERNAL_ERROR
             self.send_response('')
-            self.connected = False
             print("Cerrando conexión...")
             self.close()
         finally:
@@ -157,7 +157,6 @@ class Connection(object):
             self.s_connection.send(response)
         except Exception as e:
             print(f"exception sending response: {e}")
-            self.connected = False
 
     def validate_request(self):
         if b'\n' in self.actual_command:
@@ -212,7 +211,6 @@ class Connection(object):
             except socket.error:
                 print("socketerrorr")
                 self.status =BAD_EOL
-                self.connected = False
                 print("El cliente se desconectó inesperadamente...")
                 self.close()
                 return []
@@ -220,7 +218,6 @@ class Connection(object):
                 print("unicoderrorr")
                 self.status = INTERNAL_ERROR
                 self.send_response('')
-                self.connected = False
                 print("Cerrando conexión...")
                 self.close()
                 return []
@@ -261,7 +258,6 @@ class Connection(object):
         """
         if not os.path.exists(self.dir):
             self.status = INTERNAL_ERROR
-            self.connected = False
             self.close()
 
         while self.connected:
@@ -296,7 +292,6 @@ class Connection(object):
                     print(f"error exception:    {e}")
                     self.status = INTERNAL_ERROR
                     self.send_response('')
-                    self.connected = False
                     print("Cerrando conexión exception ...")
                     self.close()
                 
