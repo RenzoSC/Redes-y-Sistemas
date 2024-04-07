@@ -251,8 +251,12 @@ def main():
         print("* Indique el nombre del archivo a descargar:")
         client.retrieve(input().strip())
 
+    # client.s.send('get_file_listing\r\nget_file_listing\r\nget_file_listing\r\n'.encode("ascii"))
+    # status, message = client.read_response_line(3)
+    # print(f"status: {status}\nmessage: {message}")
+    # print(f"buffer: {client.buffer}")
+    # client.connected=False
+    # client.s.close()
     client.close()
-
-
 if __name__ == '__main__':
     main()
