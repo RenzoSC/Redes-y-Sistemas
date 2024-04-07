@@ -162,7 +162,6 @@ class Connection(object):
         if b'\n' in self.actual_command:
             self.status = BAD_EOL
             self.send_response('')
-            self.connected = False
             print("cerrando conexion")
             self.close()
 
@@ -224,7 +223,6 @@ class Connection(object):
             if buffer == b'':
                 print("socketerrorr")
                 self.status =BAD_EOL
-                self.connected = False
                 print("El cliente se desconectó inesperadamente...")
                 self.close()
                 return []
