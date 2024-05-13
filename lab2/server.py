@@ -40,32 +40,32 @@ class Server(object):
         """
         Atiende una conexión. Recibe un objeto Connection y se encarga
         de manejarla.
-        """
+        """  
+        #c.send(b"Esperando tu turno...\n")
         self.threadLimiter.acquire()
         def handler():
+            #c.send(b"Aceptado\n")
+            print("Cliente aceptado")
             try:
+                
                 connection.handle()
             finally:
+                print("Cliente desconectado\n")
                 self.threadLimiter.release()
         t = threading.Thread(target=handler)
         t.start()
-        """
-        El patrón que te mostré anteriormente, donde el bloque finally dentro del método handle() de Connection se encarga de 
-        cerrar la conexión y limpiar recursos, es suficiente para garantizar que el hilo de ejecución termine adecuadamente, 
-        liberando el bloqueo adquirido previamente con acquire().
-        Por lo tanto, si confías en que Connection.handle() manejará adecuadamente la terminación del hilo y la liberación de
-        recursos, no necesitarías llamar explícitamente a release() después de acquire() en el método serve() del servidor.
-        """
 
     def serve(self):
         """
-        Loop principal del servidor. Se acepta una conexión a la vez
-        y se espera a que concluya antes de seguir.
+        Loop principal del servidor. Acepta clientes y los envia al handler
         """
         while True:
-            # FALTA: Aceptar una conexión al server, crear una
-            # Connection para la conexión y atenderla hasta que termine.
+            active_connections = threading.active_count() - 1 # Contar las conexiones activas
+            print(f"[ACTIVE CONNECTIONS] {active_connections}")
             client,addr = self.server_socket.accept()
+            #if self.clients >= MAX_CONNECTIONS:
+            #    client.close()
+            #    self.clients -= 1
             connection_c = connection.Connection(client,self.dir)
             self.handle(connection_c)
             
