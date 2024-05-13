@@ -1,0 +1,3 @@
+packet FeedPacket {
+    int remainingBuffer;
+}
