@@ -18,6 +18,7 @@ private:
     vector<vector<pair<int,int>>>graphNetwork;
     int nodeName;
     int numGates;
+    int cantNodes;
     vector<int>whereToSend;
     cMessage * sayHi;
 public:
@@ -28,7 +29,7 @@ protected:
     virtual void finish();
     virtual void handleMessage(cMessage *msg);
     virtual bool isSayHiMsg(cMessage * msg);
-    void bfs(ll v, vector<vl> &g, vector<bool> &vis, vector<ll> &dis);
+    void bfs(int v, vector<vector<pair<int,int>>> g, vector<bool> vis, vector<int> dis, int actual_node, int dest_node);
 
     virtual void sayHiToNeighbours();
     virtual bool isHelloPkt(Packet * pkt);
@@ -51,20 +52,34 @@ Net::Net() {
 Net::~Net() {
 }
 
-void Net::bfs(ll v, vector<vl> &g, vector<bool> &vis, vector<ll> &dis) {
-    queue<ll> q;
+void Net::bfs(int v, vector<vector<pair<int,int>>> g, vector<bool> vis, vector<int> dis, int actual_node, int dest_node) {
+    //v   -> vertice de donde empezamos
+    //g   -> grafo
+    //vis -> visitados
+    //dis -> distancia desde v
+    queue<int> q;
     vis[v] = true;
     q.push(v);
     while (!q.empty()) {
         v = q.front();
         q.pop();
-        for (ll u : g[v]) {
-            if (!vis[u]) {
-                vis[u] = true;
-                q.push(u);
-                dis[u] = dis[v]+1;
+        for (pair<int,int> u : g[v]) {
+            if (!vis[u.first]) {
+                vis[u.first] = true;
+                q.push(u.first);
+                dis[u.first] = dis[v]+1;
             }
         }
+    }
+    //Tenemos en dis la distancia desde el destino hacia todos los nodos
+    //Vemos cual de los vecinos del nodo actual es el final del camino mas corto
+    //Podemos hacer esto pues todas las conexiones son Bidireccionales
+    int minimo = 2147483647;
+    for (pair<int,int> u : graphNetwork[actual_node]) {
+         if (dis[u.first] < minimo) {
+             minimo = dis[u.first];
+             whereToSend[dest_node] = u.second;
+         }
     }
 }
 
@@ -124,6 +139,7 @@ void Net::processInformation(Hello *pkt){
         graphNetwork[y].push_back({x,gateToX});
         whereToSend[i]=-1;                       //<-- inicializo a donde enviar en -1 (ningun gate es -1)
     }
+    cantNodes = pkt->getHopCount();
 }
 
 void Net::printNeighInformation(Hello *hpkt){
@@ -162,6 +178,7 @@ void Net::handleMessage(cMessage *msg) {
     Hello * hpkt = (Hello *)msg;
     int actual_node = this->getParentModule()->getIndex();
     int dest_node = pkt->getDestination();
+    //int cantidad_nodos = 8; //Deberia ser 8 en este caso
     
     if(isSayHiMsg(msg)){
         //empieza a decirle hello a su vecino
@@ -176,14 +193,7 @@ void Net::handleMessage(cMessage *msg) {
             //actualizar info
             actualizeInformation(hpkt);
 
-            //processInformation(hpkt);   //descomentar
-            if(nodeName == 0){   //usado solo para debugear xd  --> dsp borrar
-                printNeighInformation(hpkt);
-                printGateInformation(hpkt);
-                processInformation(hpkt);
-                printGateInformation(hpkt);
-            }
-            //de acá no hay que hacer más nada
+            processInformation(hpkt);
             delete(msg);
         }
     }else{
@@ -196,9 +206,22 @@ void Net::handleMessage(cMessage *msg) {
             // We send to link interface #0, which is the
             // one connected to the clockwise side of the ring
             // Is this the best choice? are there others?
-            send(msg, "toLnk$o",0);
 
+            //int diffHorario = (actual_node - dest_node + cantidad_nodos) % cantidad_nodos;
+            //int diffAntihorario = (dest_node - actual_node + cantidad_nodos) % cantidad_nodos;
 
+            //if(diffHorario < diffAntihorario){
+            //    send(msg, "toLnk$o",0);
+            //}
+            //else{
+            //    send(msg, "toLnk$o",1);
+            //}
+            if(whereToSend[dest_node] == -1){
+                vector<bool> vis(cantNodes,false);
+                vector<int> dis(cantNodes,0);
+                bfs(dest_node, graphNetwork, vis, dis, actual_node, dest_node);
+            }
+             send(msg, "toLnk$o",whereToSend[dest_node]);
             //acá lo que hay que hacer es como ya tenemos el grafo completo
             //hacer un algoritmo en el cual calcule por donde (por qué gate) tengo que enviar
             //el paquete para llegar a x nodo

@@ -1,9 +1,9 @@
-file 3141 1717169944                                            
+file 35288 1717357915                                           
 version 3
-run General-0-20240531-12:13:50-18651
+run General-0-20240602-16:51:00-28668
 attr configname General
-attr datetime 20240531-12:13:50
-attr datetimef 20240531-121350
+attr datetime 20240602-16:51:00
+attr datetimef 20240602-165100
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -11,7 +11,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Network
-attr processid 18651
+attr processid 28668
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -22,6 +22,24 @@ config sim-time-limit 200s
 config Network.node[0].app.interArrivalTime exponential(1)
 config Network.node[0].app.packetByteSize 125000
 config Network.node[0].app.destination 5
+config Network.node[2].app.interArrivalTime exponential(1)
+config Network.node[2].app.packetByteSize 125000
+config Network.node[2].app.destination 5
+config Network.node[1].app.interArrivalTime exponential(1)
+config Network.node[1].app.packetByteSize 125000
+config Network.node[1].app.destination 5
+config Network.node[3].app.interArrivalTime exponential(1)
+config Network.node[3].app.packetByteSize 125000
+config Network.node[3].app.destination 5
+config Network.node[4].app.interArrivalTime exponential(1)
+config Network.node[4].app.packetByteSize 125000
+config Network.node[4].app.destination 5
+config Network.node[6].app.interArrivalTime exponential(1)
+config Network.node[6].app.packetByteSize 125000
+config Network.node[6].app.destination 5
+config Network.node[7].app.interArrivalTime exponential(1)
+config Network.node[7].app.packetByteSize 125000
+config Network.node[7].app.destination 5
 
 vector 0 Network.node[0].lnk[1] "Buffer Size" ETV
 vector 1 Network.node[1].lnk[1] "Buffer Size" ETV
@@ -31,18 +49,20 @@ vector 4 Network.node[4].lnk[1] "Buffer Size" ETV
 vector 5 Network.node[5].lnk[1] "Buffer Size" ETV
 vector 6 Network.node[6].lnk[1] "Buffer Size" ETV
 vector 7 Network.node[7].lnk[1] "Buffer Size" ETV
-vector 8 Network.node[0].lnk[0] "Buffer Size" ETV
-vector 9 Network.node[7].lnk[0] "Buffer Size" ETV
-vector 10 Network.node[6].lnk[0] "Buffer Size" ETV
-0	1158 224 9 298 0 0.0007 16 0 1 8 8
-1	1382 225 10 299 0 0.0007 16 0 1 8 8
-2	1607 224 11 300 0 0.0007 16 0 1 8 8
-3	1831 224 12 301 0 0.0007 16 0 1 8 8
-4	2055 224 13 302 0 0.0007 16 0 1 8 8
-5	2279 225 14 303 0 0.0007 16 0 1 8 8
-6	2504 225 15 304 0 0.0007 16 0 1 8 8
-7	2729 225 16 297 0 0.0007 16 0 1 8 8
-8	2954 92 331 341 0.898560388484 2.154491146531 4 0 1 2 2
-9	3046 46 336 337 1.898660388484 1.898660388484 2 0 1 1 1
-10	3092 48 345 346 2.898760388484 2.898760388484 2 0 1 1 1
+vector 8 Network.node[7].lnk[0] "Buffer Size" ETV
+vector 9 Network.node[6].lnk[0] "Buffer Size" ETV
+vector 10 Network.node[0].lnk[0] "Buffer Size" ETV
+vector 11 Network.node[5].app Delay ETV
+0	2092 224 9 298 0 0.0007 16 0 1 8 8
+1	2316 2894 10 3087 0 58.384987260447 126 0 7 339 1387
+2	5210 4673 11 3084 0 58.111258956028 192 0 62 5220 213580
+3	9883 4999 12 3095 0 58.878964054203 204 0 73 6266 288886
+4	14882 4585 13 3098 0 58.879064054203 188 0 56 5156 201010
+5	19467 225 14 303 0 0.0007 16 0 1 8 8
+6	19692 225 15 304 0 0.0007 16 0 1 8 8
+7	19917 225 16 297 0 0.0007 16 0 1 8 8
+8	20142 3989 331 3099 0.353159139138 58.898660388484 158 0 41 3375 99995
+9	24131 4096 335 3102 0.485128163722 58.898760388484 162 0 44 3615 109485
+10	28227 2562 342 3081 0.898560388484 58.043741534404 101 0 8 183 731
+11	30789 4498 361 3091 1.485228163722 58.485228163722 115 1.0001 46.295121085317 2143.3099905411 56477.892473124
 
